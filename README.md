@@ -235,3 +235,8 @@ For convenience, here is the faster RCNN citation:
         Booktitle = {Advances in Neural Information Processing Systems ({NIPS})},
         Year = {2015}
     }
+
+
+
+The command for testing:
+/usr/bin/python2.7 tools/test_net.py --imdb voc_2007_test --model output/vgg16/voc_2007_trainval/default/vgg16_faster_rcnn_iter_70000.ckpt --cfg experiments/cfgs/vgg16.yml --tag ${EXTRA_ARGS_SLUG} --net vgg16 --set ANCHOR_SCALES [8,16,32] ANCHOR_RATIOS [0.5,1,2] /home
