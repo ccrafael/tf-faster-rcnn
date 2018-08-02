@@ -109,7 +109,6 @@ def _rescale_boxes(boxes, inds, scales):
 
 def im_detect(sess, net, image):
     """
-
     :param sess: Tensor flow session
     :param net: ConvNet
     :param im: A PIL Image
@@ -247,9 +246,10 @@ def test_net(tfsession, net, imdb, weights_filename, max_per_image=100, thresh=0
                      augment.Color(0.5),
                      augment.Scale(1, 0.9, 21),
                      augment.Scale(0.9, 1, 21),
-                     augment.Rotation(90),
-                     augment.Rotation(180),
-                     augment.Rotation(270),)
+                     #augment.Rotation(90),
+                     #augment.Rotation(180),
+                     #augment.Rotation(270),
+                     )
 
     # init a timer for each augmentation
     for id in range(len(augmentations)):

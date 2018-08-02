@@ -65,7 +65,7 @@ def fusion(boxes):
 
     new_boxes = []
     for i in range(S):
-        new_boxes.append(fusion_median(boxes[clusters[i], :]))
+        new_boxes.append(fusion_mean(boxes[clusters[i], :]))
 
     return np.vstack(new_boxes)
 
