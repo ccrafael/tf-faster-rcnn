@@ -43,8 +43,6 @@ def fusion(boxes):
     :return: An array with shape Nx5 with the fusiones BB.
     """
 
-
-
     # if there is just one element dont do fusion
     if len(boxes) == 1:
         return boxes[0]

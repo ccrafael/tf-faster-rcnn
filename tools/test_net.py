@@ -17,6 +17,9 @@ import tensorflow as tf
 from datasets.factory import get_imdb
 from model.config import cfg, cfg_from_file, cfg_from_list
 from model.test import test_net
+from model.fasterrcnn import FasterRCNN
+from model.yolo import Yolo
+
 from nets.mobilenet_v1 import mobilenetv1
 from nets.resnet_v1 import resnetv1
 from nets.vgg16 import vgg16
@@ -86,13 +89,6 @@ if __name__ == '__main__':
     imdb = get_imdb(args.imdb_name)
     imdb.competition_mode(args.comp_mode)
 
-    # tensor flow conf
-    tfconfig = tf.ConfigProto(allow_soft_placement=True)
-    tfconfig.gpu_options.allow_growth = True
-
-    # init session
-    session = tf.Session(config=tfconfig)
-
     # load network
     if args.net == 'vgg16':
         net = vgg16()
@@ -107,21 +103,35 @@ if __name__ == '__main__':
     else:
         raise NotImplementedError
 
-    # load model
-    net.create_architecture("TEST", imdb.num_classes, tag='default',
-                            anchor_scales=cfg.ANCHOR_SCALES,
-                            anchor_ratios=cfg.ANCHOR_RATIOS)
 
-    if args.model:
-        print(('Loading model check point from {:s}').format(args.model))
-        saver = tf.train.Saver()
-        saver.restore(session, args.model)
-        print('Loaded.')
+    model = None
+    if False:
+        # tensor flow conf
+        tfconfig = tf.ConfigProto(allow_soft_placement=True)
+        tfconfig.gpu_options.allow_growth = True
+
+        # init session
+        session = tf.Session(config=tfconfig)
+        # load model
+        net.create_architecture("TEST", imdb.num_classes, tag='default',
+                                anchor_scales=cfg.ANCHOR_SCALES,
+                                anchor_ratios=cfg.ANCHOR_RATIOS)
+
+        if args.model:
+            print('Loading model check point from {:s}'.format(args.model))
+            saver = tf.train.Saver()
+            saver.restore(session, args.model)
+            print('Loaded.')
+        else:
+            print('Loading initial weights from {:s}'.format(args.weight))
+            session.run(tf.global_variables_initializer())
+            print('Loaded.')
+
+        model = FasterRCNN(session, net, imdb, max_per_image=args.max_per_image)
     else:
-        print(('Loading initial weights from {:s}').format(args.weight))
-        session.run(tf.global_variables_initializer())
-        print('Loaded.')
+        model = Yolo(imdb)
 
-    test_net(session, net, imdb, filename, max_per_image=args.max_per_image)
+    test_net(model, imdb, filename)
+
 
     session.close()

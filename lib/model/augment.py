@@ -92,18 +92,21 @@ class Sharpeness(Augment):
 class Scale(Augment):
     """ scale augmentation."""
 
-    def __init__(self, scalex, scaley, n):
+    def __init__(self, scalex, scaley):
         self._scalex = scalex
         self._scaley = scaley
-        self._revert = np.concatenate([[scalex, scaley, scalex, scaley] for i in range(n)])
+        self._revert = [self._scalex, self._scaley, self._scalex, self._scaley]
 
     def augment(self, image):
         """ Change the scale """
         width, height = image.size
         return image.resize((int(round(width*self._scalex)), int(round(height* self._scaley))), PIL.Image.LANCZOS)
 
-    def revert(self, image, image_augmented, boxes):
-        return np.divide(boxes, self._revert)
+    def revert(self, image, image_augmented, predictedbb):
+
+        if len(predictedbb) > 0:
+            predictedbb[:, 0:4] = np.divide(predictedbb[:, 0:4], self._revert)
+        return predictedbb
 
 
 class Rotation(Augment):
@@ -144,7 +147,7 @@ class Rotation(Augment):
 
         return  nH, nW
 
-    def revert(self, image, augmented_image, boxes):
+    def revert(self, image, augmented_image, boundingBoxes):
         """ Revert the rotation for the boundig boxes """
 
         cols, rows = augmented_image.size
@@ -161,28 +164,24 @@ class Rotation(Augment):
         delta_height = (nH - ori_rows)//2
 
         new_boxes = []
-        for row in boxes:
-            new_row = []
-            for i in range(21):
-                j = i*4;
+        for bb in boundingBoxes:
 
-                # get a bounding box
-                new_bb = [(row[j], row[j+1]), (row[j+2], row[j+1]), (row[j], row[j+3]), (row[j+2], row[j+3])]
+            # get a bounding box
+            new_bb = [(bb[0], bb[1]), (bb[2], bb[1]), (bb[0], bb[3]), (bb[2], bb[3])]
 
-                # revert the rotation of the BB
-                new_bb = self.rotate_box(new_bb, cx, cy, rows, cols)
+            # revert the rotation of the BB
+            new_bb = self.rotate_box(new_bb, cx, cy, rows, cols)
 
-                # revert the offset of the BB
-                new_bb = [(p[0] - delta_width, p[1] - delta_height) for p in new_bb]
+            # revert the offset of the BB
+            new_bb = [(p[0] - delta_width, p[1] - delta_height) for p in new_bb]
 
-                # take the BB of the BB
-                new_row.extend(
-                    [max(0, min([x[0] for x in new_bb])),
-                     max(0, min([x[1] for x in new_bb])),
-                     min(image.size[0], max([x[0] for x in new_bb])),
-                     min(image.size[1], max([x[1] for x in new_bb]))])
+            # take the BB of the BB
+            new_bb = [max(0, min([x[0] for x in new_bb])),
+                 max(0, min([x[1] for x in new_bb])),
+                 min(image.size[0], max([x[0] for x in new_bb])),
+                 min(image.size[1], max([x[1] for x in new_bb])), bb[4], bb[5]]
 
-            new_boxes.append(new_row)
+            new_boxes.append(new_bb)
 
         return np.array(new_boxes)
 
