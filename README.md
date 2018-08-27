@@ -11,9 +11,9 @@ This project just use the test mode adding augmentations to the original image.
   - Docker users: Since the recent upgrade, the docker image on docker hub (https://hub.docker.com/r/mbuckler/tf-faster-rcnn-deps/) is no longer valid. However, you can still build your own image by using dockerfile located at `docker` folder (cuda 8 version, as it is required by Tensorflow r1.0.) And make sure following Tensorflow installation to install and use nvidia-docker[https://github.com/NVIDIA/nvidia-docker]. Last, after launching the container, you have to build the Cython modules within the running container. 
 
 ### Installation
-1. Clone the repository
+1. Clone the repository and darknet submodule
   ```Shell
-  git clone https://github.com/endernewton/tf-faster-rcnn.git
+  git clone https://github.com/ccrafael/tf-faster-rcnn.git --recursive
   ```
 
 2. Update your -arch in setup script to match your GPU
@@ -41,20 +41,23 @@ This project just use the test mode adding augmentations to the original image.
   cd ..
   ```
 
-
+4. Build the darknet submodule to build YOLOv2
+  ```Shell
+  cd darknet
+  make
+  ```
 
 ### Setup data
-Please follow the instructions of py-faster-rcnn [here](https://github.com/rbgirshick/py-faster-rcnn#beyond-the-demo-installation-for-training-and-testing-models) to setup VOC and COCO datasets (Part of COCO is done). The steps involve downloading data and optionally creating soft links in the ``data`` folder. Since faster RCNN does not rely on pre-computed proposals, it is safe to ignore the steps that setup proposals.
+Please follow the instructions of py-faster-rcnn [here](https://github.com/rbgirshick/py-faster-rcnn#beyond-the-demo-installation-for-training-and-testing-models) to setup VOC and 
+COCO datasets (Part of COCO is done). The steps involve downloading data 
+and optionally creating soft links in the data folder. Since faster RCNN 
+does not rely on pre-computed proposals, it is safe to ignore the steps that setup proposals.
 
-If you find it useful, the ``data/cache`` folder created on my side is also shared [here](http://ladoga.graphics.cs.cmu.edu/xinleic/tf-faster-rcnn/cache.tgz).
+If you find it useful, the data/cache folder created on my side is also shared here.
 
 ### Demo and Test with pre-trained models
-1. Download pre-trained model
-  ```Shell
-  # Resnet101 for voc pre-trained on 07+12 set
-  ./data/scripts/fetch_faster_rcnn_models.sh
-  ```
-  **Note**: if you cannot download the models through the link, or you want to try more models, you can check out the following solutions and optionally update the downloading script:
+
+  Download the models through the link:
   - Another server [here](http://xinlei.sp.cs.cmu.edu/xinleic/tf-faster-rcnn/).
   - Google drive [here](https://drive.google.com/open?id=0B1_fAEgxdnvJSmF3YUlZcHFqWTQ).
 
