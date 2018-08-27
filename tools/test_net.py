@@ -105,7 +105,7 @@ if __name__ == '__main__':
 
 
     model = None
-    if False:
+    if True:
         # tensor flow conf
         tfconfig = tf.ConfigProto(allow_soft_placement=True)
         tfconfig.gpu_options.allow_growth = True

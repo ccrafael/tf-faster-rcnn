@@ -30,7 +30,7 @@ from model.config import cfg, get_output_dir
 from model import augment
 from model import fusion
 
-DEBUG = False
+DEBUG = True
 
 
 def worker(args_list):
