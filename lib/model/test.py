@@ -99,13 +99,21 @@ def test_net(model, imdb, weights_filename):
                      augment.Contrast(2),
                      augment.Contrast(2.5),
                      augment.Equalization(),
+
+                     augment.Sharpeness(0.5),
+                     augment.Sharpeness(2),
+
                      augment.Color(0.5),
+                     augment.Color(1.5),
+
+
                      augment.Scale(1, 0.8),
                      augment.Scale(0.8, 1),
 
                      augment.Rotation(90),
                      augment.Rotation(180),
                      augment.Rotation(270),)
+
 
     thread_pool = ThreadPool(len(augmentations))
 
@@ -147,14 +155,15 @@ def test_net(model, imdb, weights_filename):
 
         # just for debug what the hell is happening
         if DEBUG:
-            # au = augmentations[0]
-            # im = au.augment(im)
+            #au = augmentations[0]
+            #im = au.augment(im)
             fig, ax = plt.subplots(figsize=(12, 12))
             ax.imshow(im, aspect='equal')
 
             color = ['red', 'yellow', 'orange', 'purple', 'brown', 'blue', 'gray', 'pink', 'white', 'black', 'cyan']
             for p in predictions:
                 visualize_detections(imdb, p['prediction'], color[p['id'] % len(color)], ax)
+                pass
 
             visualize_labels(imdb, i, roi, ax)
             plt.show()
@@ -213,7 +222,7 @@ def visualize_detections(imdb, predictions, color, ax):
         bbox = p[:4]
         score = p[4]
         cls = imdb.classes[int(p[5])]
-        draw_bb(bbox, cls, score, color, ax, pos=random.randint(0, 3))
+        draw_bb(bbox, cls, score, color, ax, pos=1)
 
     plt.axis('off')
 
@@ -225,7 +234,7 @@ def draw_bb(bbox, class_name, score, color, ax, pos=0):
         plt.Rectangle((bbox[0], bbox[1]),
                       bbox[2] - bbox[0],
                       bbox[3] - bbox[1], fill=False,
-                      edgecolor=color, linewidth=1.5))
+                      edgecolor=color, linewidth=3))
 
     str_format = '{:s} {:.3f}'
     if score is None:
@@ -233,6 +242,7 @@ def draw_bb(bbox, class_name, score, color, ax, pos=0):
 
     x = int(bbox[0])
     y = int(bbox[1])
+
     if pos == 1:
         x = bbox[2]
         y = bbox[1]
@@ -245,4 +255,4 @@ def draw_bb(bbox, class_name, score, color, ax, pos=0):
 
     ax.text(x, y, str_format.format(class_name, score),
             bbox=dict(facecolor=color, alpha=0.5),
-            fontsize=14, color='white')
+            fontsize=16, color='white')

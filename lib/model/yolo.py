@@ -149,7 +149,7 @@ class Yolo(Model):
         self.net = self.load_net("darknet/cfg/yolov2-voc.cfg", "darknet/yolov2-voc.weights", 0)
         self.meta = self.load_meta("darknet/cfg/voc.data")
 
-    def detect(self, image, thresh=.05, hier_thresh=.5, nms=.5):
+    def detect(self, image, thresh=.4, hier_thresh=.5, nms=.5):
 
         # write on special memory device for fast access
         name = '/dev/shm/' + str(uuid.uuid1())

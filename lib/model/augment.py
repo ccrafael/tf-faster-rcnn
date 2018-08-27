@@ -95,10 +95,13 @@ class Scale(Augment):
     def __init__(self, scalex, scaley):
         self._scalex = scalex
         self._scaley = scaley
+
+        #self._revert = [self._scalex, self._scaley, self._scalex, self._scaley]
         self._revert = [self._scalex, self._scaley, self._scalex, self._scaley]
 
     def augment(self, image):
         """ Change the scale """
+
         width, height = image.size
         return image.resize((int(round(width*self._scalex)), int(round(height* self._scaley))), PIL.Image.LANCZOS)
 
@@ -106,6 +109,7 @@ class Scale(Augment):
 
         if len(predictedbb) > 0:
             predictedbb[:, 0:4] = np.divide(predictedbb[:, 0:4], self._revert)
+
         return predictedbb
 
 
