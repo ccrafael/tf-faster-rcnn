@@ -2,6 +2,7 @@ from sklearn.cluster import KMeans
 import numpy as np
 from model.nms_wrapper import nms
 from model.config import cfg
+import math
 
 
 def kmeans(boxes, k):
@@ -13,9 +14,9 @@ def kmeans(boxes, k):
     :param boxes: The BB in format Nx4 where (x1,y1,x2,y2)
     :param k: the number of clusters.
 
-    :return: 5 clusters with the element indexes of each clusters.
+    :return: k clusters with the element indexes of each clusters.
     """
-    model = KMeans(n_clusters=k, random_state=0,).fit(boxes)
+    model = KMeans(n_clusters=k).fit(boxes)
 
     pred = model.labels_
 
@@ -63,8 +64,9 @@ def fusion(boxes):
 
     new_boxes = []
     for i in range(S):
-        new_boxes.append(fusion_mean(boxes[clusters[i], :]))
+        new_boxes.append(fusion_median(boxes[clusters[i], :]))
 
+    #print(np.vstack(new_boxes))
     return np.vstack(new_boxes)
 
 

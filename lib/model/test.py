@@ -30,7 +30,8 @@ from model.config import cfg, get_output_dir
 from model import augment
 from model import fusion
 
-DEBUG = True
+# Change to True see the first 10 detections
+DEBUG = False
 
 
 def worker(args_list):
@@ -106,14 +107,13 @@ def test_net(model, imdb, weights_filename):
                      augment.Color(0.5),
                      augment.Color(1.5),
 
-
                      augment.Scale(1, 0.8),
                      augment.Scale(0.8, 1),
 
-                     augment.Rotation(90),
-                     augment.Rotation(180),
-                     augment.Rotation(270),)
-
+                     #augment.Rotation(90),
+                     #augment.Rotation(180),
+                     #augment.Rotation(270),
+                     )
 
     thread_pool = ThreadPool(len(augmentations))
 
